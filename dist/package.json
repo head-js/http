@@ -1,6 +1,6 @@
 {
   "name": "@head/http",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "$http",
   "main": "http.js",
   "scripts": {},
@@ -23,7 +23,7 @@
     "vanilla.js": "*"
   },
   "devDependencies": {
-    "axios": "1.3.6",
+    "axios": "1.6.8",
     "vanilla.js": "0.2.11"
   }
 }

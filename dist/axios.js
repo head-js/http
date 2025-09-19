@@ -2,8 +2,52 @@
 
 // require('core-js/modules/web.url.to-json.js');
 
+function _defineProperty(e, r, t) {
+  return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+    value: t,
+    enumerable: !0,
+    configurable: !0,
+    writable: !0
+  }) : e[r] = t, e;
+}
+function ownKeys(e, r) {
+  var t = Object.keys(e);
+  if (Object.getOwnPropertySymbols) {
+    var o = Object.getOwnPropertySymbols(e);
+    r && (o = o.filter(function (r) {
+      return Object.getOwnPropertyDescriptor(e, r).enumerable;
+    })), t.push.apply(t, o);
+  }
+  return t;
+}
+function _objectSpread2(e) {
+  for (var r = 1; r < arguments.length; r++) {
+    var t = null != arguments[r] ? arguments[r] : {};
+    r % 2 ? ownKeys(Object(t), !0).forEach(function (r) {
+      _defineProperty(e, r, t[r]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) {
+      Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
+    });
+  }
+  return e;
+}
+function _toPrimitive(t, r) {
+  if ("object" != typeof t || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != typeof i) return i;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return ("string" === r ? String : Number)(t);
+}
+function _toPropertyKey(t) {
+  var i = _toPrimitive(t, "string");
+  return "symbol" == typeof i ? i : i + "";
+}
+
 /* eslint-disable */
-/* axios@1.3.6 */
+/* axios@1.6.8 */
 
 const kindOf = (cache => thing => {
   const str = toString.call(thing);
@@ -54,7 +98,7 @@ function forEach(obj, fn) {
     }
   }
 }
-function merge( /* obj1, obj2, obj3, ... */
+function merge(/* obj1, obj2, obj3, ... */
 ) {
   const result = {};
   const assignValue = (val, key) => {
@@ -79,7 +123,6 @@ function Http(_ref) {
   let {
     instance
   } = _ref;
-  // const $axios = axios.create({});
   this.$axios = instance;
   this.$axios.interceptors.response.use(_ref2 => {
     let {
@@ -96,17 +139,81 @@ function Http(_ref) {
       statusText,
       headers: headers.toJSON()
     };
-    const rfc = {
-      code: 0,
-      message: 'ok',
-      data,
-      res
-    };
-    return Promise.resolve(rfc);
+    if (data !== null && data !== void 0 && data.data) {
+      const rest = _objectSpread2({
+        code: 0,
+        message: 'ok',
+        res
+      }, data);
+      return Promise.resolve(rest);
+    } else {
+      const rest = {
+        code: 0,
+        message: 'ok',
+        res,
+        data: data || {}
+      };
+      return Promise.resolve(rest);
+    }
   }, err => {
     // eslint-disable-line arrow-body-style
     // console.log('$axios.intercepters.response.rejected', err); // eslint-disable-line no-console
-    return Promise.reject(err);
+    if (err && err.name === 'AxiosError') {
+      const {
+        name,
+        config,
+        request,
+        /* response, */code,
+        message
+      } = err; // eslint-disable-line no-unused-vars
+      const {
+        status,
+        statusText,
+        headers,
+        data
+      } = err.response;
+      const res = {
+        status,
+        statusText,
+        headers: headers.toJSON(),
+        name,
+        code,
+        message
+      };
+      if (data !== null && data !== void 0 && data.data) {
+        const rest = _objectSpread2({
+          code: -1,
+          message: 'AxiosError',
+          res
+        }, data);
+        return Promise.reject(rest);
+      } else {
+        const rest = {
+          code: -1,
+          message: 'AxiosError',
+          res,
+          data: data || {}
+        };
+        return Promise.reject(rest);
+      }
+    } else if (err && err.__CANCEL__) {
+      const {
+        name,
+        code,
+        message,
+        stack
+      } = err; // eslint-disable-line no-unused-vars
+      const rest = {
+        code: -1,
+        message: 'AxiosCanceledError',
+        res: {},
+        data: {},
+        stack
+      };
+      return Promise.reject(rest);
+    } else {
+      return Promise.reject(err);
+    }
   }); // eslint-disable-line function-paren-newline
 }
 Http.prototype.get = function (endpoint) {
@@ -147,8 +254,12 @@ Http.prototype.delete = function (endpoint) {
     headers
   }));
 };
+
+/**
+ * const $axios = axios.create({});
+ * const $http = create({ instance: $axios });
+ */
 function create($axios) {
-  // eslint-disable-line import/prefer-default-export
   const $http = new Http($axios);
   return $http;
 }

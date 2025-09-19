@@ -39,7 +39,22 @@ $http.get('https://httpbin.org/status/403')
     console.log(code, message, data, res);
   });
 
-$http.get('https://putsreq.com/KtI8O2ncvAkNi7mgB4pM')
+const ac = new AbortController();
+
+$http.get('https://polyfills.vercel.app/api/sleep/2/seconds', null, null, { signal: ac.signal })
+  .then(({ code, message, data, res }) => {
+    console.assert(false, '🌀 $http.get(endpoint) Cancel');
+  })
+  .catch(({ code, message, data, res }) => {
+    console.log('💊 $http.get(endpoint) Cancel');
+    console.log(code, message, data, res);
+  });
+
+setTimeout(() => {
+  ac.abort();
+}, 1000);
+
+$http.get('https://polyfills.vercel.app/api/raise-500/standard')
   .then(({ code, message, data, res }) => {
     console.assert(false, '🌀 $http.get(endpoint) 500');
     console.log(code, message, data, res);
@@ -49,7 +64,17 @@ $http.get('https://putsreq.com/KtI8O2ncvAkNi7mgB4pM')
     console.log(code, message, data, res);
   });
 
-$http.post('https://putsreq.com/9CeC44c0dpNt0QzYiYzE').then(({ code, message, data, res }) => {
+$http.get('https://polyfills.vercel.app/api/raise-500/text')
+  .then(({ code, message, data, res }) => {
+    console.assert(false, '🌀 $http.get(endpoint) 500');
+    console.log(code, message, data, res);
+  })
+  .catch(({ code, message, data, res }) => {
+    console.log('💊 $http.get(endpoint) 500');
+    console.log(code, message, data, res);
+  });
+
+$http.post('https://polyfills.vercel.app/api/set-authn', null, { username: 'username' }).then(({ code, message, data, res }) => {
   console.log('🌀 $http.post(endpoint) x-set-authn');
   console.log(code, message, data, res);
 });

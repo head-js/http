@@ -1,7 +1,7 @@
 import { merge } from './lib/utils';
 
 
-function Http({ instance }) { // const $axios = axios.create({});
+function Http({ instance }) {
   this.$axios = instance;
 
   this.$axios.interceptors.response.use(
@@ -28,6 +28,10 @@ function Http({ instance }) { // const $axios = axios.create({});
           const rest = { code: -1, message: 'AxiosError', res, data: data || {} };
           return Promise.reject(rest);
         }
+      } else if (err && err.__CANCEL__) {
+        const { name, code, message, stack } = err; // eslint-disable-line no-unused-vars
+        const rest = { code: -1, message: 'AxiosCanceledError', res: {}, data: {}, stack };
+        return Promise.reject(rest);
       } else {
         return Promise.reject(err);
       }
@@ -55,7 +59,11 @@ Http.prototype.delete = function (endpoint, params = {}, headers = {}, options =
 };
 
 
-function create($axios) { // eslint-disable-line import/prefer-default-export
+/**
+ * const $axios = axios.create({});
+ * const $http = create({ instance: $axios });
+ */
+function create($axios) {
   const $http = new Http($axios);
   return $http;
 }

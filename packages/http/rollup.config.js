@@ -10,6 +10,7 @@ export default [
 
     external: [
       'core-js/modules/es.array.reverse.js',
+      'core-js/modules/es.regexp.exec.js',
       'core-js/modules/web.url.to-json.js',
       'axios',
       'vanilla.js',
@@ -41,6 +42,7 @@ export default [
 
     external: [
       'core-js/modules/es.array.reverse.js',
+      'core-js/modules/es.regexp.exec.js',
       'core-js/modules/web.url.to-json.js',
       'axios',
       'vanilla.js',

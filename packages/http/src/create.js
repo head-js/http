@@ -5,9 +5,12 @@ import xauth from './xauth';
 import xtrace from './xtrace';
 
 
+/**
+ * const $http = $create();
+ */
 function $create() {
   const $axios = axios.create({
-    headers: { 'X-Requested-With': '@head/http@0.7.0' },
+    headers: { 'X-Requested-With': '@head/http@0.7.1' },
   });
 
   const $http = $.create({ instance: $axios });

@@ -1,5 +1,5 @@
 /* eslint-disable */
-/* axios@1.3.6 */
+/* axios@1.6.8 */
 
 const kindOf = (cache => thing => {
   const str = toString.call(thing);

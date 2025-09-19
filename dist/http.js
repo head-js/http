@@ -3,11 +3,16 @@
 // require('core-js/modules/es.array.reverse.js');
 var axios = require('axios');
 // require('core-js/modules/web.url.to-json.js');
+// require('core-js/modules/es.regexp.exec.js');
 
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
-
+function _defineProperty(e, r, t) {
+  return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+    value: t,
+    enumerable: !0,
+    configurable: !0,
+    writable: !0
+  }) : e[r] = t, e;
+}
 function ownKeys(e, r) {
   var t = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -41,25 +46,11 @@ function _toPrimitive(t, r) {
 }
 function _toPropertyKey(t) {
   var i = _toPrimitive(t, "string");
-  return "symbol" == typeof i ? i : String(i);
-}
-function _defineProperty(obj, key, value) {
-  key = _toPropertyKey(key);
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
+  return "symbol" == typeof i ? i : i + "";
 }
 
 /* eslint-disable */
-/* axios@1.3.6 */
+/* axios@1.6.8 */
 
 const kindOf = (cache => thing => {
   const str = toString.call(thing);
@@ -110,7 +101,7 @@ function forEach(obj, fn) {
     }
   }
 }
-function merge( /* obj1, obj2, obj3, ... */
+function merge(/* obj1, obj2, obj3, ... */
 ) {
   const result = {};
   const assignValue = (val, key) => {
@@ -135,7 +126,6 @@ function Http(_ref) {
   let {
     instance
   } = _ref;
-  // const $axios = axios.create({});
   this.$axios = instance;
   this.$axios.interceptors.response.use(_ref2 => {
     let {
@@ -209,6 +199,21 @@ function Http(_ref) {
         };
         return Promise.reject(rest);
       }
+    } else if (err && err.__CANCEL__) {
+      const {
+        name,
+        code,
+        message,
+        stack
+      } = err; // eslint-disable-line no-unused-vars
+      const rest = {
+        code: -1,
+        message: 'AxiosCanceledError',
+        res: {},
+        data: {},
+        stack
+      };
+      return Promise.reject(rest);
     } else {
       return Promise.reject(err);
     }
@@ -252,8 +257,12 @@ Http.prototype.delete = function (endpoint) {
     headers
   }));
 };
+
+/**
+ * const $axios = axios.create({});
+ * const $http = create({ instance: $axios });
+ */
 function create($axios) {
-  // eslint-disable-line import/prefer-default-export
   const $http = new Http($axios);
   return $http;
 }
@@ -346,10 +355,13 @@ function jaegerTracing($axios) {
   }, null); // eslint-disable-line function-paren-newline
 }
 
+/**
+ * const $http = $create();
+ */
 function $create() {
-  const $axios = axios__default["default"].create({
+  const $axios = axios.create({
     headers: {
-      'X-Requested-With': '@head/http@0.7.0'
+      'X-Requested-With': '@head/http@0.7.1'
     }
   });
   const $http = $$1.create({
